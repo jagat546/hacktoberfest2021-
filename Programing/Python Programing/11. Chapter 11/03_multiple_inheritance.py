@@ -5,6 +5,7 @@ class Freelancer:
     def upgradeLevel(self):
         self.level = self.level + 1
 
+
 class Employee:
     company = "Visa"
     eCode = 120
@@ -12,6 +13,7 @@ class Employee:
 
 class Programmer(Freelancer, Employee):
     name = "Rohit"
+
 
 p = Programmer()
 p.upgradeLevel()

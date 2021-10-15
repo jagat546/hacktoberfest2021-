@@ -1,4 +1,4 @@
-a_122 = '''harry'''
+a_122 = """harry"""
 # a = 'harry'
 # a = "harry"
 b = 345

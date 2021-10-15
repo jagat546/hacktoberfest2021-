@@ -10,6 +10,7 @@ class Number:
         print("Lets multiply")
         return self.num * num2.num
 
+
 n1 = Number(4)
 n2 = Number(6)
 sum = n1 + n2

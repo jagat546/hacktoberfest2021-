@@ -1,6 +1,7 @@
 class Sample:
     a = "Harry"
 
+
 obj = Sample()
 obj.a = "Vikky"
 # Sample.a = "Vikky"

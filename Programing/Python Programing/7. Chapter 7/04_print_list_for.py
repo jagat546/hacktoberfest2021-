@@ -1,5 +1,4 @@
-fruits = ['Banana', 'Watermelon', 'Grapes', 'Mangoes']
+fruits = ["Banana", "Watermelon", "Grapes", "Mangoes"]
 
 for item in fruits:
     print(item)
-   

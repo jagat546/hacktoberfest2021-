@@ -7,4 +7,3 @@ story = "once upon a time there was a youtuber named Harry who uploaded python c
 # print(story.capitalize())
 # print(story.find("upon"))
 print(story.replace("Harry", "CodeWithHarry"))
- 

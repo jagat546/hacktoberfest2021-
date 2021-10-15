@@ -1,5 +1,6 @@
 def square(num):
-    return num*num
+    return num * num
+
 
 l = [1, 2, 4]
 

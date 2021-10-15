@@ -1,6 +1,6 @@
 def greet(name="Stranger"):
-    print("Good Day, "+ name)
- 
+    print("Good Day, " + name)
 
-greet("Harry") 
+
+greet("Harry")
 greet()
