@@ -13,11 +13,11 @@ void merge(int a[], int p, int q, int r)
     n1 = q - p + 1;
     n2 = r - q;
     int L[n1 + 1], R[n2 + 1];
-    for (i = 1; i <= n1; i++)
+    for (i = 0; i <n1; i++)
     {
         L[i] = a[p + i - 1];
     }
-    for (j = 1; j <= n2; j++)
+    for (j = 0; j < n2; j++)
     {
         R[j] = a[q + j];
     }
