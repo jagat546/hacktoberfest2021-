@@ -1,111 +1,125 @@
-//jshint esversion:6
+const mongoose = require('mongoose');
 
-const express = require("express");
-const bodyParser = require("body-parser");
-const ejs = require("ejs");
-const mongoose = require("mongoose");
-const _ = require("lodash");
+mongoose.connect("mongodb://localhost:27017/fruitsDB", {userNewUrlParser: true});
 
-const homeStartingContent = "Lacus vel facilisis volutpat est velit egestas dui id ornare. Semper auctor neque vitae tempus quam. Sit amet cursus sit amet dictum sit amet justo. Viverra tellus in hac habitasse. Imperdiet proin fermentum leo vel orci porta. Donec ultrices tincidunt arcu non sodales neque sodales ut. Mattis molestie a iaculis at erat pellentesque adipiscing. Magnis dis parturient montes nascetur ridiculus mus mauris vitae ultricies. Adipiscing elit ut aliquam purus sit amet luctus venenatis lectus. Ultrices vitae auctor eu augue ut lectus arcu bibendum at. Odio euismod lacinia at quis risus sed vulputate odio ut. Cursus mattis molestie a iaculis at erat pellentesque adipiscing.";
-const aboutContent = "Hac habitasse platea dictumst vestibulum rhoncus est pellentesque. Dictumst vestibulum rhoncus est pellentesque elit ullamcorper. Non diam phasellus vestibulum lorem sed. Platea dictumst quisque sagittis purus sit. Egestas sed sed risus pretium quam vulputate dignissim suspendisse. Mauris in aliquam sem fringilla. Semper risus in hendrerit gravida rutrum quisque non tellus orci. Amet massa vitae tortor condimentum lacinia quis vel eros. Enim ut tellus elementum sagittis vitae. Mauris ultrices eros in cursus turpis massa tincidunt dui.";
-const contactContent = "Scelerisque eleifend donec pretium vulputate sapien. Rhoncus urna neque viverra justo nec ultrices. Arcu dui vivamus arcu felis bibendum. Consectetur adipiscing elit duis tristique. Risus viverra adipiscing at in tellus integer feugiat. Sapien nec sagittis aliquam malesuada bibendum arcu vitae. Consequat interdum varius sit amet mattis. Iaculis nunc sed augue lacus. Interdum posuere lorem ipsum dolor sit amet consectetur adipiscing elit. Pulvinar elementum integer enim neque. Ultrices gravida dictum fusce ut placerat orci nulla. Mauris in aliquam sem fringilla ut morbi tincidunt. Tortor posuere ac ut consequat semper viverra nam libero.";
+const fruitSchema = new mongoose.Schema ({
+  name: {
+    type: String,
+    required: true
+  },                                                          //after starting mongo shell, first write show dbs, then use db name then use find
+  rating: {
+    type: Number,
+    min: 1,       // Validators
+    max: 10// Validators
+  },
+  review: String
+});
 
-const app = express();
+const Fruit = mongoose.model("Fruit", fruitSchema);
 
-app.set('view engine', 'ejs');
+const fruit = new Fruit({  //javascript object
+//  name: "Apple",
+  rating: 10,
+  review: "Peaches are so yummy."
+});
 
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(express.static("public"));
+fruit.save();
 
-mongoose.connect("mongodb://localhost:27017/blogDB", {useNewUrlParser: true});
+const personSchema = new mongoose.Schema ({
+  name: String,
+  age: Number,
+  favoriteFruit: fruitSchema   // we have to update the schema accordingly to use the embedded object in new object
+});
 
-const postSchema = {
+const Person = mongoose.model("Person", personSchema);
 
- title: String,
+const pineapple = new Fruit({
+  name: "Pineapple",
+  score: 9,
+  review: "Great fruit"
+});
 
- content: String
+pineapple.save();
 
-};
+const person = new Person({
+  name: "Amy",
+  age: 12,
+  favoriteFruit: pineapple //embedded
+});
 
-const Post = mongoose.model("Post", postSchema);
+person.save();
+
+//Person.deleteMany({name: "John"}, function(err){
+//  if(err) {
+//    console.log(err);
+//  } else{
+//    console.log("Deleted");
+//  }
+//});
+
+const kiwi = new Fruit({
+  name: "Kiwi",
+  score: 10,
+  review: "The best fruit!"
+});
+
+const orange = new Fruit({
+  name: "Orange",
+  score: 4,
+  review: "Too sour for me"
+});
+
+const banana = new Fruit({
+  name: "Banana",
+  score: 3,
+  review: "Wierd texture"
+})
+Fruit.insertMany([kiwi, orange, banana], function(err){
+  if(err){
+    console.log(err);
+  } else{
+    console.log("Successfully saved all fruits to fruitsDB!");
+  }
+});
 
 
-app.get("/", function(req, res){
-  Post.find({}, function(err, posts){
-    res.render("home", {
-      startingContent: homeStartingContent,
-      posts: posts
-      });
+Fruit.find(function(err, fruits){
+  if(err){
+    console.log(err);
+  } else{
+    mongoose.connection.close();  //so that we do not have to press ctrl+c again and again
+
+  fruits.forEach(function(fruit){
+    console.log(fruit.name);
   });
-
+}
 });
-
-app.get("/about", function(req, res){
-  res.render("about", {aboutContent: aboutContent});
-});
-
-app.get("/contact", function(req, res){
-  res.render("contact", {contactContent: contactContent});
-});
-
-app.get("/compose", function(req, res){
-  res.render("compose");
-});
-
-app.post("/compose", function(req, res){
-
-  const post = new Post ({
-
-   title: req.body.postTitle,
-
-   content: req.body.postBody
-
- });
- post.save(function(err){
-
-  if (!err){
-
-    res.redirect("/");
-
+// Mongoose update and delete and always give a call back function if any error is there
+Fruit.updateOne({_id: "616dbb2631fdb72c60db9ff6"}, {name: "Peach"}, function(err){
+  if(err){
+    console.log(err);
+  } else{
+    console.log("Successfully updated");
   }
 
 });
 
-  posts.push(post);
-
-  res.redirect("/");
-
+Fruit.deleteOne({_id: "616dbb2631fdb72c60db9ff6"}, function(err){
+  if(err){
+    console.log(err);
+  } else{
+    console.log("Successfully deleted from the document");
+  }
 });
 
-app.get("/posts/:postId", function(req, res){
-  const requestedPostId = req.params.postId;
-  const requestedTitle = _.lowerCase(req.params.postName);
-
-  posts.forEach(function(post){
-    const storedTitle = _.lowerCase(post.title);
-
-    if (storedTitle === requestedTitle) {
-      res.render("post", {
-        title: post.title,
-        content: post.content
-      });
-    }
+const findDocuments = function(db, callback) {
+  //Get the documents collection
+  const collection = db.collection('fruits');
+  //Find some documents
+  collection.find({}).toArray(function(err, fruits) {
+    assert.equal(err, null);
+    console.log("Found the following documents");
+    console.log(fruits);
+    callback(fruits);
   });
-
-  Post.findOne({_id: requestedPostId}, function(err, post){
-
-   res.render("post", {
-
-     title: post.title,
-
-     content: post.content
-
-   });
-
- });
-
-});
-
-app.listen(3000, function() {
-  console.log("Server started on port 3000");
-});
+};
